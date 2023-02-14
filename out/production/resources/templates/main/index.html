@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content} )}">
+
+    <th:block th:fragment="content">
+
+        <div th:each="storeType : ${storeTypeList}" >
+            <div style="float:left; width:15%; border:1px solid black; margin:3%; height:200px;">
+                <a th:href="@{/store/list(food_category_cd = ${storeType.food_category_cd} )}">[[${storeType.food_category_name}]]</a>
+            </div>
+        </div>
+
+    </th:block>
+
+</th:block>

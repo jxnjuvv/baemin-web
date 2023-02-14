@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content} )}">
+
+    <th:block th:fragment="content">
+
+        <div style="width:1200px; margin:0 auto;">
+
+            <div style="float:left; width:600px; margin:0 auto; margin-top:20px;">
+                <div style="float:left;">
+                    <img th:src="${store.store_picture_url}" alt="첨부이미지" th:if="${store.store_picture_url != null}" />
+                </div>
+                <div style="float:left;">
+                        [[${store.name}]] <br />
+                        [[${store.content}]] <br />
+                        [[${store.address}]] <br />
+                    <a href="#" style="float:right">♡</a>
+                </div>
+
+                <div style="clear:both;"></div>
+
+                <div style="margin-top:20px; border:1px solid gray;">
+                    <button style="width:48%;">메뉴</button>
+                    <button style="width:48%; float:right;">리뷰</button>
+                </div>
+
+                <div class="menu-list" style="border:1px solid black; margin-top:10px; cursor:pointer;" th:each="menu : ${menuList}" >
+                    <input type="hidden" name="menu_id" th:value="${menu.menu_id}" />
+                    <input type="hidden" name="name" th:value="${menu.name}" />
+                    <input type="hidden" name="price" th:value="${menu.price}" />
+                    <div style="float:left;">
+                        <img th:src="${menu.menu_url}" alt="첨부이미지" th:if="${menu.menu_url != null}" />
+                    </div>
+                    <div style="float:left;">
+                        [[${menu.name}]] <br />
+                        [[${menu.price}]]
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>
+            </div>
+
+            <div style="float:right; width:500px; border:1px solid gray; text-align:center; margin-top:20px;">
+                <div>장바구니</div>
+                <hr />
+                <div class="order-menu-list">
+                </div>
+                <hr />
+                <div>
+                    <button type="button" data-toggle="modal" class="btn btn-danger coupon-list" data-target="#couponModal">쿠폰</button>
+                    합계 : <span class="total-price">0</span>원</div>
+                <button class="btn btn-success order-button">주문하기</button>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            $(function() {
+
+                setCouponList();
+
+                // 메뉴 추가
+                $(".menu-list").click(function() {
+                    let name = $(this).find("input[name=name]").val();
+                    let price = $(this).find("input[name=price]").val();
+                    let menu_id = $(this).find("input[name=menu_id]").val();
+                    let orderMenuList = "<ul><li>"+name+" <button onclick='deleteMenu(this)'>삭제</button></li><li>가격:<span class='price'>"+price+"</span>원</li></ul>";
+                    $(".order-menu-list").append(orderMenuList);
+
+                    let totalPrice = Number($(".total-price").text()) + Number(price);
+                    $(".total-price").text(totalPrice);
+
+                });
+
+                // 쿠폰 적용 버튼 클릭 이벤트
+                $(".use-coupon").click(function() {
+                    if (!$("input[name=coupon]:checked").val()) {
+                        alert("쿠폰을 선택해주세요.");
+                        return;
+                    }
+                    if ($(".total-price").text() == 0) {
+                        alert("메뉴를 먼저 선택해주세요.");
+                        $("#couponModal").modal("hide");
+                        return;
+                    }
+
+                    let coupon = $("input[name=coupon]:checked").val();
+                    $("input[name=temp-coupon-id]").val(coupon);
+                    $("#couponModal").modal("hide");
+
+                    let deductedPrice = $("input[name=coupon]:checked").next("input[name=coupon-deducted_price]").val();
+                    let totalPrice = Number($(".total-price").text()) - Number(deductedPrice);
+                    $(".total-price").text(totalPrice);
+                    $(".coupon-list").hide();
+
+                    alert("쿠폰이 적용되었습니다.");
+                });
+
+                // 적용 쿠폰 확인
+                $(".coupon-list").click(function() {
+                    let tempCouponId = $("input[name=temp-coupon-id]").val();
+                    if (!tempCouponId) {
+                        $("input[name=coupon]").prop("checked", false);
+                        return;
+                    }
+                    $("#modalBody input").each(function () {
+                        if ($(this).val() == tempCouponId) {
+                            $(this).prop("checked", true);
+                        }
+                    });
+                });
+
+                $(".order-button").click(function() {
+                    if ($(".total-price").text() == 0) {
+                        alert("메뉴를 먼저 선택해주세요.");
+                        $("#couponModal").modal("hide");
+                        return;
+                    }
+                    if (!confirm("주문 하시겠습니까?")) return;
+                    alert("주문이 완료되었습니다.");
+                    location.href = "/main/index";
+                });
+            });
+
+            // 메뉴 삭제
+            function deleteMenu(obj) {
+                let price = $(obj).parents("li").next().find(".price").text();
+                let totalPrice = Number($(".total-price").text()) - Number(price);
+
+                $(".total-price").text(totalPrice);
+                $(obj).parents("ul").remove();
+            }
+
+            // 쿠폰 목록 불러오기
+            function setCouponList() {
+                $.ajax({
+                    url:"/coupon/list",
+                    method : 'GET',
+                    contentType: 'application/json',
+                    success:function(data) {
+                        //console.log(data);
+                        let couponHtml = '';
+
+                        for (let val of data) {
+                            couponHtml += '<div style="clear:both;  border-top:1px solid gray;">';
+                            couponHtml += '<label>';
+                            couponHtml += '<span style="float:left; padding-top:25px;">';
+                            couponHtml += '<input type="radio" name="coupon" value="'+val["coupon_id"]+'">';
+                            couponHtml += '<input type="hidden" name="coupon-deducted_price" value="'+val["deducted_price"]+'">';
+                            couponHtml += '</span>';
+                            couponHtml += '<span style="float:left; margin-left:15px; cursor:pointer;">';
+                            couponHtml += val["name"]+' <br />'+val["min_delivery_price"]+'원 이상 구매시 '+val["deducted_price"]+'원 할인 <br />사용기한 : '+val["expired_date"].substring(0, 10);
+                            couponHtml += '</span></label></div>';
+                            $("#modalBody").html(couponHtml);
+                        }
+                    },
+                    error:function(e) {
+                        console.log(e);
+                    }
+                });
+            }
+
+        </script>
+
+    </th:block>
+
+</th:block>
+
+<!-- 쿠폰 모달 -->
+<div id="couponModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="modalTitle" class="modal-title">쿠폰 목록</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+            </div>
+            <div id="modalBody" class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary use-coupon">적용</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" value="" name="temp-coupon-id" />
+</div>

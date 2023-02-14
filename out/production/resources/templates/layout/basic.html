@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="setContent(content)">
+
+<head>
+    <!-- 블럭바 -->
+    <div class="header">
+
+        <!--로고-->
+        <a class="logo" href="/main/index" ><img src="/img/logo.png" /><span class="sr-only">(current)</span></a>
+
+        <div class="button_container">
+            <p class="description"></p>
+            <button class="btn"><span>Google 로그인</span></button>
+            <!--<p class="link">
+              Design by
+              <a href="https://dribbble.com/skytrip" target="_blank">SkyTrip</a>
+            </p>-->
+        </div>
+
+        <div class="wrap">
+            <div class="search">
+                <input type="text" class="searchTerm" placeholder="검색">
+                <button type="submit" class="searchButton">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Simple Sidebar - Start Bootstrap Template</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/simple-sidebar.css}" rel="stylesheet">
+
+    <!-- Bootstrap core JavaScript -->
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+    <link th:href="@{/css/style.css?after}" rel="stylesheet">
+    <link th:href="@{https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css}" rel="stylesheet">
+    <link th:href="@{//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css}" rel="stylesheet" >
+
+
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+
+
+        <div class="container-fluid">
+
+            <th:block th:replace = "${content}"></th:block>
+
+        </div>
+
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+</body>
+</th:block>
+</html>
+

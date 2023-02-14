@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="web.baemin.board.mapper.BoardMapper">
+    <select id="boardList" parameterType="web.baemin.board.dto.Board" resultType="web.baemin.board.dto.Board">
+        SELECT * FROM board
+    </select>
+
+    <select id="boardRead" parameterType="string" resultType="web.baemin.board.dto.Board">
+        SELECT * FROM board WHERE id = #{id}
+    </select>
+
+    <insert id="boardInsert" parameterType="web.baemin.board.dto.Board">
+        INSERT INTO board(title, content) VALUES(#{title}, #{content})
+    </insert>
+
+    <update id="boardUpdate" parameterType="web.baemin.board.dto.Board">
+        UPDATE board SET title=#{title}, content=#{content} WHERE id = #{id}
+    </update>
+
+</mapper>

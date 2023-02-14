@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content} )}">
+
+    <th:block th:fragment="content">
+
+        <div style="width:1200px; margin:0 auto;">
+
+            <div style="float:left; margin-left:50px">
+                <select name="storeTypeList">
+                    <option th:each="storeList : ${storeTypeList}" th:value="${storeList.food_category_cd}"
+                            th:text="${storeList.food_category_name}"></option>
+                </select>
+            </div>
+
+            <div style="float:right; margin-right:200px;">
+                <select name="orderList">
+                    <option>기본 정렬순</option>
+                    <option>별점순</option>
+                    <option>리뷰 많은순</option>
+                    <option>거리순</option>
+                </select>
+            </div>
+
+            <div style="clear:both;"></div>
+
+            <div style="border:1px solid gray; float:left; margin-left:50px; margin-top:10px;" th:each="store : ${storeList}" >
+                <div style="float:left;">
+                    <img th:src="${store.store_picture_url}" alt="첨부이미지" th:if="${store.store_picture_url != null}" />
+                </div>
+                <div style="float:left;">
+                    <a th:href="@{/store/read(store_id = ${store.store_id} )}">
+                        [[${store.name}]] <br />
+                        [[${store.content}]] <br />
+                        [[${store.address}]]
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            $(function() {
+                let food_category_cd = /*[[ ${food_category_cd} ]]*/;
+                $("select[name=storeTypeList] option").each(function() {
+                    if (food_category_cd == $(this).val()) {
+                        console.log(this);
+                        $(this).attr("selected", "selected");
+                    }
+                });
+
+                $("select[name=storeTypeList]").change(function() {
+                    location.href = "list?food_category_cd="+$(this).val();
+                });
+            });
+
+        </script>
+
+    </th:block>
+
+</th:block>
