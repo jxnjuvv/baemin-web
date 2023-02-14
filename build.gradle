@@ -1,0 +1,52 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.1'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'war'
+}
+
+group = 'web.baemin'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+bootWar {
+    archiveName("ROOT.war")
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.projectlombok:lombok'
+//    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'org.springframework.security:spring-security-test'
+    compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client'
+
+    compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-java8time' // 타임리프
+    implementation 'mysql:mysql-connector-java' // mysql
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2' // mybatis
+    compile group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16' // log4j2
+    implementation'com.google.code.gson:gson:2.8.7' // Json 라이브러리
+    // https://mvnrepository.com/artifact/net.coobird/thumbnailator
+    implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.12'
+
+
+}
+
+test {
+    useJUnitPlatform()
+}
