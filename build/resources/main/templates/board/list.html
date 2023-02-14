@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content} )}">
+
+    <th:block th:fragment="content">
+
+        <h1 class="mt-4">게시판
+            <span>
+                <a th:href="@{/board/register}">
+                    <button type="button" class="btn btn-outline-primary">등록
+                    </button>
+                </a>
+            </span>
+        </h1>
+
+        <form action="/movie/list" method="get" id="searchForm">
+            <input type="hidden" name="page" value="1">
+        </form>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">번호</th>
+                <th scope="col">등록일</th>
+                <th scope="col">제목</th>
+                <th scope="col">내용</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr th:each="board : ${boardList}" >
+
+                    <th scope="row">
+                        <a th:href="@{/board/modify(id = ${board.id} )}">
+                          [[${board.id}]]
+                        </a>
+                    </th>
+                    <td><b>[[${board.reg_date}]]</b></td>
+                    <td><b>[[${board.title}]]</b></td>
+                    <td><b>[[${board.content}]]</b></td>
+
+                </tr>
+
+            </tbody>
+        </table>
+
+    </th:block>
+
+</th:block>

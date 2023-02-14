@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="web.baemin.near.mapper.NearMapper">
+    <select id="addressList" parameterType="web.baemin.near.dto.Address" resultType="web.baemin.near.dto.Address">
+        SELECT * FROM store
+    </select>
+
+</mapper>

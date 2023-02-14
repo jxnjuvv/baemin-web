@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="web.baemin.ordershistory.mapper.OrdersHistoryMapper">
+    <select id="ordersHistoryList" parameterType="long" resultType="web.baemin.ordershistory.dto.OrdersHistory">
+        SELECT T1.order_id, T1.user_id, T3.login_id, T1.store_id, T2.store_name, T1.total_price, T2.store_picture_url, T1.order_address, T1.detail_address, T1.created_date, T1.modified_date, T1.STATUS, T4.review_id, T1.requests
+        FROM orders T1
+        LEFT OUTER JOIN store T2
+        ON T1.store_id = T2.store_id
+        LEFT OUTER JOIN users T3
+        ON T1.user_id = T3.user_id
+        LEFT OUTER JOIN review T4
+        ON T1.order_id = T4.order_id
+        WHERE T3.login_id = #{login_id}
+        ORDER BY T1.created_date DESC;
+    </select>
+
+    <select id="ordersMenuHistoryList" parameterType="long" resultType="web.baemin.ordershistory.dto.OrdersMenuHistory">
+        SELECT T2.menu_name, T1.menu_count, T2.price
+          FROM order_menu T1
+          LEFT OUTER JOIN menu T2
+            ON T1.menu_id = T2.menu_id
+         WHERE T1.order_id = #{order_id}
+    </select>
+</mapper>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content} )}">
+
+    <th:block th:fragment="content">
+        <div class="mainFrame">
+            <div class="menu" th:each="storeType : ${storeTypeList}">
+                <div class="letter">
+                    [[${storeType.food_category_name}]]
+                </div>
+
+                <div id="category_img">
+                    <a th:href="@{/store/list(food_category_cd = ${storeType.food_category_cd} )}">
+                        <img class="ma" th:src="'/img/img'+ ${storeType.food_category_cd} + '.png'">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+</th:block>

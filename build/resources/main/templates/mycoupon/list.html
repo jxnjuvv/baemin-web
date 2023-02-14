@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:color="http://www.w3.org/1999/xhtml">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content} )}">
+
+    <th:block th:fragment="content">
+
+        <div style="width:1000px; margin:0 auto;">
+
+            <div class="ju">쿠폰함</div>
+            <div class="jumoon" th:each="myCoupon : ${myCouponList}">
+                <div>
+                    <th:block th:switch="${myCoupon.status}">
+                        <ul style="list-style:none" th:case="일반" }>
+                            <li style="font-size:45px; margin:15px 0px 15px 0px">
+                                [[${myCoupon.deducted_price}]]
+                            </li>
+                            <li>
+                                [[${myCoupon.name}]]
+                            </li>
+                            <li>
+                                [[${myCoupon.content}]]
+                            </li>
+                            <li>
+                                최소 주문 금액: [[${myCoupon.min_delivery_price}]]
+                            </li>
+                            <li>
+                                만료 일자: [[${myCoupon.expired_date}]]
+                            </li>
+                        </ul>
+
+                        <ul style="list-style:none; color:#808080" th:case="사용" }>
+                            <li style="font-size:45px; margin:15px 0px 15px 0px">
+                                [[${myCoupon.deducted_price}]]
+                            </li>
+                            <li>
+                                [[${myCoupon.name}]]
+                            </li>
+                            <li>
+                                [[${myCoupon.content}]]
+                            </li>
+                            <li>
+                                최소 주문 금액: [[${myCoupon.min_delivery_price}]]
+                            </li>
+                            <li>
+                                [[${myCoupon.status}]] 일자: [[${myCoupon.modified_date}]]
+                            </li>
+                            <li>
+                                [[${myCoupon.status}]]된 쿠폰입니다.
+                            </li>
+                        </ul>
+
+                        <ul style="list-style:none; color:#B9062F" th:case="만료" }>
+                            <li style="font-size:45px; margin:15px 0px 15px 0px">
+                                [[${myCoupon.deducted_price}]]
+                            </li>
+                            <li>
+                                [[${myCoupon.name}]]
+                            </li>
+                            <li>
+                                [[${myCoupon.content}]]
+                            </li>
+                            <li>
+                                최소 주문 금액: [[${myCoupon.min_delivery_price}]]
+                            </li>
+                            <li>
+                                [[${myCoupon.status}]] 일자: [[${myCoupon.expired_date}]]
+                            </li>
+                            <li>
+                                [[${myCoupon.status}]]된 쿠폰입니다.
+                            </li>
+                        </ul>
+                    </th:block>
+                </div>
+
+            </div>
+
+        </div>
+
+    </th:block>
+
+</th:block>

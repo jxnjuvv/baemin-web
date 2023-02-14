@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="web.baemin.mycoupon.mapper.MyCouponMapper">
+    <select id="myCouponList" resultType="web.baemin.mycoupon.dto.MyCoupon">
+        SELECT *
+        FROM coupon T1
+        WHERE T1.user_id = (SELECT user_id FROM users WHERE login_id = #{login_id})
+        ORDER BY status DESC, expired_date ASC;
+    </select>
+
+    <update id="myCouponUpdate" parameterType="web.baemin.mycoupon.dto.MyCoupon">
+        UPDATE coupon
+        SET STATUS = '만료'
+        WHERE user_id = (SELECT user_id FROM users WHERE login_id = #{login_id})
+        AND NOW() > expired_date
+    </update>
+
+</mapper>

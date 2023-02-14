@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="web.baemin.main.mapper.MainMapper">
+    <select id="storeTypeList" parameterType="web.baemin.main.dto.StoreType" resultType="web.baemin.main.dto.StoreType">
+        SELECT * FROM store_type ORDER BY food_category_cd ASC
+    </select>
+
+</mapper>

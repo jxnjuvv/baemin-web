@@ -1,0 +1,295 @@
+
+body{
+  width: 100%;
+  height: 500px;
+}
+
+.header{
+  width: 100%;
+  height: 25%;
+  background-color: rgb(66, 239, 216);
+}
+
+.he{
+  width: 100%;
+  height: 25%;
+}
+
+/*로고*/
+.logo {
+position:relative;
+bottom: 10px;
+left: 150px;
+z-index:2;}
+.logo img { width:300px; }
+
+
+.min img { width:50px; }
+
+
+/*로그인 버튼 */
+.login_container {
+  position: absolute;
+  top: 25px;
+  right: 150px;
+  z-index:2;
+}
+
+/*로그인 후 버튼 */
+.button_container {
+  position: absolute;
+  top: 25px;
+  right: 150px;
+  z-index:2;
+}
+
+/* 검색 작업 */
+.cit{
+ position:relative;
+ bottom: 90px;
+ left: 250px;
+ z-index:1;
+}
+
+.cit img {
+width:50px;
+}
+
+.address{
+ position:relative;
+ width: 400px;
+ bottom: 90px;
+ left: 260px;
+ z-index:1;
+}
+
+.search{
+ position:relative;
+ bottom: 90px;
+ left: 270px;
+ z-index:1;
+}
+
+.body_cit{
+position:relative;
+}
+
+.orderForm{
+margin: 0px 0px auto;
+}
+
+container-fluid{
+left: 300px;
+justify-content : center;
+}
+
+.d-flex{
+ width:1400px;
+ text-align: center;
+ top-margin:50px;
+ z-index:3;
+ margin:0 auto;
+ font-family: "ha";
+}
+/* 메뉴 */
+.menu{
+ position:relative;
+
+ float:left;
+ left:70px;
+ width:300px;
+ height:300px;
+ border:1px;
+ solid: rgb(255, 255, 255);
+}
+
+@font-face {
+  font-family: "ha";
+  src: url("../font/BMDOHYEON_ttf.ttf") format('truetype');
+}
+.mt-4
+{
+font-family: "ha";
+font-size: 20px;
+}
+
+.letter{
+
+font-family: "ha";
+font-size: 20px;
+}
+
+.min
+{
+font-family: "ha";
+font-size: 20px;
+}
+
+.ju
+{
+font-family: "ha";
+font-size: 50px;
+}
+
+.modal-header
+{
+font-family: "ha";
+font-size: 25px;
+}
+
+.bea
+{
+font-family: "ha";
+font-size: 15px;
+}
+
+.shop
+{
+font-family: "ha";
+font-size: 25px;
+}
+.oder
+{
+font-family: "ha";
+
+}
+.juso
+{
+font-family: "ha";
+
+}
+
+.storelist
+{
+border:5px
+solid gray;
+float:left;
+margin-left:150px;
+margin-top:10px;
+width:380px;
+height: 400px;
+}
+
+.list img
+{
+margin:20px;
+height:170px;
+max-width:350px;
+}
+
+.address
+{
+font-family: "ha";
+}
+.search
+{
+font-family: "ha";
+}
+
+.jang{
+font-family: "ha";
+float:right;
+width:500px;
+border:5px
+solid gray;
+text-align:center;
+margin-top:20px;
+}
+
+.description
+{
+font-family: "ha";
+}
+
+.jumoon
+{
+font-family: "ha";
+border:5px
+solid gray;
+margin: 0 auto;
+width: 50%;
+margin-top: 20px;
+}
+
+.line
+{
+ position:relative;
+ bottom: 500px;
+ right : 270px;
+}
+
+.mt-4
+{
+ position:relative;
+ bottom: 10px;
+ margin 0 auto;
+}
+
+.rene
+{
+ position:relative;
+ bottom: 10px;
+ left : 900px;
+}
+
+.reme
+{
+ position:relative;
+ bottom: 10px;
+ left : 900px;
+}
+
+.re
+{
+font-family: "ha";
+width:700px;
+}
+
+.form-group
+{
+ position:relative;
+ bottom: 30px;
+ left : 425px;
+}
+
+.con
+{
+ position:relative;
+ bottom: 20px;
+
+}
+
+.input-file-button{
+  padding: 6px 25px;
+  background-color:#FF6600;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.submit-file-button{
+  padding: 6px 25px;
+  background-color:#0080FF;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  border-style: none;
+}
+
+.sajin
+{
+ position:relative;
+ bottom: 15px;
+
+}
+.custom-file
+{
+ position:relative;
+ bottom: 10px;
+}
+.wan
+{
+ position:relative;
+ bottom: 30px;
+ left : 700px;
+}

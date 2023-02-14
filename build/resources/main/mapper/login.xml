@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="web.baemin.login.mapper.LoginMapper">
+    <select id="loginCheckUser" parameterType="web.baemin.login.dto.User" resultType="web.baemin.login.dto.User">
+        SELECT * FROM users
+            <where>
+                login_id = #{login_id}
+                <if test="password != null">
+                    AND PASSWORD = #{password}
+                </if>
+            </where>
+
+    </select>
+
+    <insert id="userInsert" parameterType="web.baemin.login.dto.User">
+        INSERT INTO users(login_id, created_date, modified_date) VALUES(#{login_id}, NOW(), NOW())
+    </insert>
+
+    <insert id="couponInsert" parameterType="web.baemin.login.dto.User">
+        INSERT INTO
+        coupon (user_id, name, content, deducted_price, min_delivery_price, created_date, expired_date, modified_date)
+        VALUES
+        (
+        (SELECT user_id FROM users WHERE login_id = #{login_id}),
+        '신규 가입 쿠폰',
+        '3000원 할인 (2주 이내 사용)',
+        '3000',
+        '10000',
+        NOW(),
+        date_add(now(), INTERVAL +14 DAY) ,
+        NOW()
+        );
+    </insert>
+
+</mapper>

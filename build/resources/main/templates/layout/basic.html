@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="setContent(content)">
+
+    <head>
+
+
+        <!-- 블럭바 -->
+        <div class="header description">
+
+            <!--로고-->
+            <a class="logo" href="/main/index"><img src="/img/logo.png" /><span class="sr-only">(current)</span></a>
+
+            <div class="login_container" th:if="${#strings.isEmpty(session.loginUserSession)}">
+                <button class="btn btn-info" onclick="kakaoLogin(); return false;"><img src="/img/kakao_icon.png"
+                                                                                        style="width:40px; height:40px" /> KAKAO 로그인</button>
+            </div>
+            <div class="button_container" th:unless="${#strings.isEmpty(session.loginUserSession)}">
+                <button class="btn btn-info" onclick="javascript:location.href='/login/logoutProc'">로그아웃</button>
+                <button class="btn btn-info" onclick="location.href='/ordershistory/list';">주문 내역</button>
+                <button class="btn btn-info" onclick="location.href='/review/list';">내가 쓴 리뷰 목록</button>
+                <button class="btn btn-info" onclick="location.href='/mycoupon/list';">쿠폰함</button>
+            </div>
+
+        </div>
+
+        <script>
+            function kakaoLogin() {
+                location.href = "https://kauth.kakao.com/oauth/authorize?client_id=624e0b249a555e4c27f5be0d9ba4badf&redirect_uri=http://localhost/login/kakao/success&response_type=code";
+            }
+        </script>
+
+
+
+        <meta charset="utf-8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>배달의 민족 WEB</title>
+
+        <!-- Bootstrap core CSS -->
+        <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+
+        <!-- Custom styles for this template -->
+        <link th:href="@{/css/simple-sidebar.css}" rel="stylesheet">
+
+        <!-- Bootstrap core JavaScript -->
+        <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+        <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+        <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+        <link th:href="@{/css/style.css?after}" rel="stylesheet">
+        <link th:href="@{https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css}" rel="stylesheet">
+        <link th:href="@{//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css}" rel="stylesheet">
+
+    </head>
+
+    <body onload="checkCookie()">
+
+    <img class="he" src="/img/body.jpg">
+
+    <ul class="container">
+
+        <a class="cit" th:href="@{/near/nearstore}"><img src="/img/cit.png" /></a>
+
+        <input class="address" type="text" id="inputAddress" onclick="setCAddress()" placeholder="주소 입력..">
+
+        <a class="search" id="searchCurAddress"><button type="button" class="btn btn-warning">입력한 주소로
+            검색</button></a>
+    </ul>
+
+    <script>
+            $("#searchCurAddress").click(function () {
+                if ($("#inputAddress").val() == null || $("#inputAddress").val() == "") {
+                    alert("주소를 입력해주세요.");
+                    return;
+                }
+                $(location).attr("href", "http://localhost/near/searchstore");
+            });
+        </script>
+    <div class="d-flex" id="wrapper">
+
+        <!-- Page Content -->
+
+        <script th:inline="javascript">
+                $(function () {
+                    var msg = [[${ msg }]];
+                    if (msg != null) alert(msg);
+                });
+
+            </script>
+
+        <script th:inline="javascript">
+                function setCAddress() {
+                    new daum.Postcode({
+                        oncomplete: function (data) {
+                            console.log(data.address);
+                            $('#inputAddress').val(data.address);
+                            setCookie("inputAddr", data.address, 30);
+                        }
+                    }).open();
+                }
+            </script>
+
+        <script th:inline="javascript">
+                function setCookie(cname, cvalue, exdays) {
+                    var d = new Date();
+                    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+                    var expires = "expires=" + d.toGMTString();
+                    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+                }
+
+                function getCookie(cname) {
+                    var name = cname + "=";
+                    var decodedCookie = decodeURIComponent(document.cookie);
+                    var ca = decodedCookie.split(';');
+                    for (var i = 0; i < ca.length; i++) {
+                        var c = ca[i];
+                        while (c.charAt(0) == ' ') {
+                            c = c.substring(1);
+                        }
+                        if (c.indexOf(name) == 0) {
+                            return c.substring(name.length, c.length);
+                        }
+                    }
+                    return "";
+                }
+
+                function checkCookie() {
+                    var cAddress = getCookie("inputAddr");
+                    if (cAddress != "") {
+                        $('#inputAddress').val(cAddress);
+                    } else {
+                        if ($('#inputAddress').val() != "" && $('#inputAddress').val() != null) {
+                            setCookie("inputAddr", $('#inputAddress').val(), 30);
+                        }
+                    }
+                }
+            </script>
+
+        <div class="container-fluid">
+
+            <th:block th:replace="${content}"></th:block>
+
+        </div>
+
+    </div>
+    <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    </body>
+
+</th:block>
+
+</html>
