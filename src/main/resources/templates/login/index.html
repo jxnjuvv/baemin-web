@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content} )}">
+
+    <th:block th:fragment="content">
+
+        <form class="lo" method="POST" name="loginForm" action="/login/loginCheck">
+            아이디 : <input type="text" name="login_id" required /> <br />
+            비밀번호 : <input type="password" name="password" required /> <br />
+            <button type="submit" class="btn btn-info">로그인</button>
+            <button onclick="kakaoLogin(); return false;" type="button" class="btn btn-info">카카오 로그인</button>
+        </form>
+
+        <script>
+            function kakaoLogin() {
+                location.href = "https://kauth.kakao.com/oauth/authorize?client_id=624e0b249a555e4c27f5be0d9ba4badf&redirect_uri=http://localhost/login/kakao/success&response_type=code";
+            }
+
+        </script>
+
+    </th:block>
+
+</th:block>

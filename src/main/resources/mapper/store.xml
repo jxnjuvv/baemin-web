@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="web.baemin.store.mapper.StoreMapper">
+    <select id="storeList" parameterType="string" resultType="web.baemin.store.dto.Store">
+        SELECT * FROM store WHERE food_category_cd = #{food_category_cd} ORDER BY store_id ASC
+    </select>
+
+    <select id="storeRead" parameterType="string" resultType="web.baemin.store.dto.Store">
+        SELECT * FROM store WHERE store_id = #{store_id}
+    </select>
+
+    <select id="menuList" parameterType="string" resultType="web.baemin.store.dto.Menu">
+        SELECT * FROM menu WHERE store_id = #{food_category_cd} ORDER BY menu_id ASC
+    </select>
+
+    <select id="couponList" resultType="web.baemin.store.dto.Coupon">
+        SELECT *
+        FROM coupon T1
+        WHERE T1.user_id = (SELECT user_id FROM users WHERE login_id = #{login_id})
+        AND T1.status='일반'
+        AND expired_date > NOW()
+        ORDER BY expired_date ASC;
+    </select>
+
+    <insert id="ordersInsert" parameterType="web.baemin.store.dto.Orders">
+        INSERT INTO orders(user_id, store_id, order_address, detail_address, order_phone, total_price, requests, created_date, modified_date) VALUES((SELECT user_id FROM users WHERE login_id = #{login_id}), #{store_id}, #{order_address}, #{detail_address}, #{order_phone}, #{total_price}, #{requests}, NOW(), NOW())
+    </insert>
+
+    <insert id="ordersMenuInsert" parameterType="web.baemin.store.dto.OrdersMenu">
+        INSERT INTO order_menu(order_id, menu_id, menu_count) VALUES(LAST_INSERT_ID(),${menu_id},${menu_count})
+    </insert>
+
+    <update id="couponUpdate" parameterType="web.baemin.store.dto.Orders">
+        UPDATE coupon SET status='사용', modified_date=NOW() WHERE coupon_id = #{coupon_id}
+    </update>
+
+    <select id="storeReviewList" parameterType="web.baemin.store.dto.Store" resultType="web.baemin.review.dto.Review">
+        SELECT T1.review_id, T2.order_id, T1.rating, T1.content, T1.created_date
+        FROM review T1
+        LEFT OUTER JOIN orders T2
+        ON T1.order_id = T2.order_id
+        WHERE T2.store_id = #{store_id}
+          AND T1.status = '일반'
+        ORDER BY T1.created_date DESC;
+    </select>
+
+</mapper>

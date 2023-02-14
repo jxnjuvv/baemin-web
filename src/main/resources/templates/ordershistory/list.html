@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:color="http://www.w3.org/1999/xhtml">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content} )}">
+
+    <th:block th:fragment="content">
+
+        <div class="orderForm">
+
+            <div class="ju">주문 내역</div>
+            <div class="jumoon" th:each="ordersHistory : ${ordersHistoryList}">
+                <div>
+
+                    <ul style="list-style:none">
+                        <li style="margin : 20px 0px 0px 0px">
+                            주문 일시: [[${ordersHistory.created_date}]]
+                        </li>
+                        <li style="margin : 20px 0px 20px 0px">
+                            <a th:href="'http://localhost/store/read?store_id='+${ordersHistory.store_id}"
+                               style="color:blue"><img th:src="${ordersHistory.store_picture_url}"
+                                                       style="max-width:350px; height:200px;"></a>
+                        </li>
+                        <li style="margin : 0px 0px 20px 0px">
+                            <a th:href="'http://localhost/store/read?store_id='+${ordersHistory.store_id}"
+                               style="font-size:30px">[[${ordersHistory.store_name}]]</a>
+                        </li>
+                        <li>
+                            주문 메뉴:
+                        </li>
+                        <li th:each="ordersMenuHistory : ${ordersHistory.ordersMenuHistoryList}">
+                            [[${ordersMenuHistory.menu_name}]] ([[${ordersMenuHistory.price}]]원)
+                            [[${ordersMenuHistory.menu_count}]]개
+                        </li> <br />
+                        <li>
+                            총 주문 금액: [[${ordersHistory.total_price}]]원
+                        </li>
+                        <hr width="85%">
+                        <li th:if="${ordersHistory.requests != ''}">
+                            요청 사항: [[${ordersHistory.requests}]]
+                        </li>
+                        <li th:unless="${ordersHistory.requests != ''}">
+                            요청 사항: 미입력
+                        </li>
+                        <li>
+                            주문 주소: [[${ordersHistory.order_address}]] [[${ordersHistory.detail_address}]]
+                        </li>
+                    </ul>
+
+                </div>
+                <form th:action="@{/review/register}" th:method="get">
+                    <input type="hidden" name="order_id" th:value="${ordersHistory.order_id}" />
+                    <input type="hidden" name="store_name" th:value="${ordersHistory.store_name}" />
+                    <button type=submit style="width:100%;" class="btn btn-success"
+                            th:if="${ordersHistory.review_id == null}">리뷰 작성</button>
+                    <button type=submit style="width:100%;" class="btn btn-warning"
+                            th:unless="${ordersHistory.review_id == null}" disabled>리뷰 작성 완료</button>
+                </form>
+
+            </div>
+
+        </div>
+
+    </th:block>
+
+</th:block>

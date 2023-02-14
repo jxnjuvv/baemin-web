@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content} )}">
+
+    <th:block th:fragment="content">
+
+        <div class="ju">리뷰 쓰기</div>
+        <div class="jumoon">
+
+            <form role="form" id="reviewForm" th:action="@{/review/register}" th:method="post">
+
+                <input type="hidden" id="order_id" th:value="${review.order_id}" name="order_id" readonly><br>
+
+                <div>
+                    <label>음식은 어떠셨어요?</label>
+                    <div class='starrr'></div>
+
+                    <script th:src="@{/starrr.js}"></script>
+                    <link th:href="@{/css/starrr.css}" rel="stylesheet">
+                    <link rel="stylesheet"
+                          href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
+
+                    <input type="hidden" id="rating" name="rating">
+
+                </div>
+
+                <div>
+                    <label>[[${review.store_name}]]</label>
+                    <div>
+                        <textarea name="content" style="width:100%; height:100px"
+                                  placeholder="음식의 맛, 양, 포장 상태 등 음식에 대한 솔직한 리뷰를 남겨주세요.(선택)"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-file-button registerBtn">등록</button>
+                <label class="input-file-button" for="uploadBtn">업로드</label>
+            </form>
+
+            <div class="uploadDiv">
+                <input style="display:none" id="uploadBtn" type="file" name='uploadFile' multiple>
+            </div>
+
+            <div class='uploadResult'>
+                <ul style="list-style-type:none;">
+
+                </ul>
+            </div>
+
+            <!-- /.row -->
+        </div>
+
+
+
+        <script>
+
+            $(document).ready(function (e) {
+
+                var rating = 0;
+
+                $('.starrr').starrr({
+                    rating: rating,
+                    change: function (e, value) {
+                        if (value) {
+                            console.log(value);
+                            rating = value;
+                            $("#rating").val(rating);
+                        }
+                    }
+                });
+
+
+                var formObj = $("form[role='form']");
+
+                $("button[type='submit']").on("click", function (e) {
+
+                    e.preventDefault();
+
+                    if ($("#rating").val() == '') {
+                        alert("별점을 입력해주세요.");
+                        return;
+                    }
+
+                    console.log("submit clicked");
+
+                    var str = "";
+
+                    $(".uploadResult ul li").each(function (i, obj) {
+
+                        var jobj = $(obj);
+
+                        console.dir(jobj);
+                        console.log("-------------------------");
+                        console.log(jobj.data("filename"));
+
+                        str += "<input type='hidden' name='reviewPictureList[" + i + "].filename' value='" + jobj.data("filename") + "'>";
+                        str += "<input type='hidden' name='reviewPictureList[" + i + "].uuid' value='" + jobj.data("uuid") + "'>";
+                        str += "<input type='hidden' name='reviewPictureList[" + i + "].uploadpath' value='" + jobj.data("uploadpath") + "'>";
+
+                    });
+
+                    console.log(str);
+
+                    formObj.append(str).submit();
+
+                });
+
+
+                var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+                var maxSize = 10485760; //10MB
+
+                function checkExtension(fileName, fileSize) {
+
+                    if (fileSize >= maxSize) {
+                        alert("파일 사이즈 초과");
+                        return false;
+                    }
+
+                    if (regex.test(fileName)) {
+                        alert("해당 종류의 파일은 업로드할 수 없습니다.");
+                        return false;
+                    }
+                    return true;
+                }
+
+                $("input[type='file']").change(function (e) {
+
+                    var formData = new FormData();
+
+                    var inputFile = $("input[name='uploadFile']");
+
+                    var files = inputFile[0].files;
+
+                    for (var i = 0; i < files.length; i++) {
+
+                        if (!checkExtension(files[i].name, files[i].size)) {
+                            return false;
+                        }
+                        formData.append("uploadFile", files[i]);
+
+                    }
+
+                    $.ajax({
+                        url: '/uploadAjaxAction',
+                        processData: false,
+                        contentType: false, data:
+                            formData, type: 'POST',
+                        dataType: 'json',
+                        success: function (result) {
+                            console.log(result);
+                            showUploadResult(result); //업로드 결과 처리 함수
+
+                        }
+                    }); //$.ajax
+
+                });
+
+                function showUploadResult(uploadResultArr) {
+
+                    if (!uploadResultArr || uploadResultArr.length == 0) { return; }
+
+                    var uploadUL = $(".uploadResult ul");
+
+                    var str = "";
+
+                    $(uploadResultArr).each(function (i, obj) {
+
+                        if (obj.filetype) {
+                            var fileCallPath = encodeURIComponent(obj.uploadpath + "/s_" + obj.uuid + "_" + obj.filename);
+                            str += "<li data-uploadpath='" + obj.uploadpath + "'";
+                            str += " data-uuid='" + obj.uuid + "' data-filename='" + obj.filename + "' data-type='" + obj.filetype + "'"
+                            str + " ><div>";
+                            str += "<span> " + obj.filename + "</span>";
+                            str += "<button type='button' data-file=\'" + fileCallPath + "\' "
+                            str += "data-type='filetype' class='btn'><i class='fa fa-times'></i></button><br>";
+                            str += "<img src='/display?fileName=" + fileCallPath + "'>";
+                            str += "</div>";
+                            str + "</li>";
+                        } else {
+                            var fileCallPath = encodeURIComponent(obj.uploadpath + "/" + obj.uuid + "_" + obj.filename);
+                            var fileLink = fileCallPath.replace(new RegExp(/\\/g), "/");
+
+                            str += "<li "
+                            str += "data-path='" + obj.uploadpath + "' data-uuid='" + obj.uuid + "' data-filename='" + obj.filename + "' data-type='" + obj.filetype + "' ><div>";
+                            str += "<span> " + obj.filename + "</span>";
+                            str += "<button type='button' data-file=\'" + fileCallPath + "\' data-type='file' "
+                            str += "class='btn'><i class='fa fa-times'></i></button><br>";
+                            str += "<img src='/img/attach.png'></a>";
+                            str += "</div>";
+                            str + "</li>";
+                        }
+                        console.log("uploadPath:" + obj.uploadpath);
+                    });
+
+                    uploadUL.append(str);
+                }
+
+                $(".uploadResult").on("click", "button", function (e) {
+
+                    console.log("delete file");
+
+                    var targetFile = $(this).data("file");
+                    var type = $(this).data("type");
+
+                    var targetLi = $(this).closest("li");
+
+                    $.ajax({
+                        url: '/deleteFile',
+                        data: { fileName: targetFile, type: type },
+                        dataType: 'text',
+                        type: 'POST',
+                        success: function (result) {
+                            alert(result);
+
+                            targetLi.remove();
+                        }
+                    }); //$.ajax
+                });
+
+            });
+
+        </script>
+
+    </th:block>
+
+</th:block>

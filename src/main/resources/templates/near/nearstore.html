@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content} )}">
+
+    <th:block th:fragment="content">
+
+        <div id="map" style="width:100%;height:610px;"></div>
+
+        <script type="text/javascript"
+                src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2a54a3fcd99375d264c57815c46bd1b8&libraries=services"></script>
+
+        <script th:inline="javascript">
+
+
+            var locPostion;
+
+            // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
+            if (navigator.geolocation) {
+
+                // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+                navigator.geolocation.getCurrentPosition(function (position) {
+
+                    var lat = position.coords.latitude, // 위도
+                        lon = position.coords.longitude; // 경도
+
+                    locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+                        message = '<div style="padding:5px; text-align: center;">현재 위치</div>'; // 인포윈도우에 표시될 내용입니다
+
+                    // 마커와 인포윈도우를 표시합니다
+                    displayMarker(locPosition, message);
+
+                });
+
+            } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+
+                locPosition = new kakao.maps.LatLng(37.52542932172273, 126.8913632018146),
+                    message = 'GeoLocation 사용 불가'
+
+                displayMarker(locPosition, message);
+            }
+
+            var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                mapOption = {
+                    center: new kakao.maps.LatLng(37.52542932172273, 126.8913632018146), // 지도의 중심좌표: TIS 학원
+                    level: 5 // 지도의 확대 레벨
+                };
+
+            // 지도를 생성합니다
+            var map = new kakao.maps.Map(mapContainer, mapOption);
+
+            // // 지도에 마커와 인포윈도우를 표시하는 함수입니다
+            function displayMarker(locPosition, message) {
+
+                // 마커를 생성합니다
+                var marker1 = new kakao.maps.Marker({
+                    map: map,
+                    position: locPosition
+                });
+
+                var iwContent = message, // 인포윈도우에 표시할 내용
+                    iwRemoveable = true;
+
+                // 인포윈도우를 생성합니다
+                var infowindow = new kakao.maps.InfoWindow({
+                    content: iwContent,
+                    removable: iwRemoveable
+                });
+
+                // 인포윈도우를 마커위에 표시합니다
+                infowindow.open(map, marker1);
+
+                // 지도 중심좌표를 접속위치로 변경합니다
+                setTimeout(function () {
+                    map.setCenter(locPosition);
+                }, 1510);
+
+            }
+
+            // 주소-좌표 변환 객체를 생성합니다
+            var geocoder = new kakao.maps.services.Geocoder();
+
+            /*<![CDATA[*/
+            var addressList = /*[[ ${addressList} ]]*/;
+            /*]]*/
+
+            var positions = new Array();
+
+            //별표 마커 소스
+            var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
+            // 마커 이미지의 이미지 크기 입니다
+            var imageSize = new kakao.maps.Size(24, 35);
+
+
+
+            //동기 방식으로 주소, 마커 추가
+            const setAddress = function () {
+                return new Promise(function (resolve, reject) {
+                    setTimeout(function () {
+                        for (const addr in addressList) {
+                            // 주소로 좌표를 검색합니다
+                            geocoder.addressSearch(addressList[addr].address, function (result, status) {
+                                // 정상적으로 검색이 완료됐으면
+                                if (status === kakao.maps.services.Status.OK) {
+
+                                    var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                                    var data = {
+                                        title: addressList[addr].store_name,
+                                        latlng: coords,
+                                        food_category_cd: addressList[addr].food_category_cd,
+                                        store_id: addressList[addr].store_id,
+                                        store_picture_url: addressList[addr].store_picture_url,
+                                        phone: addressList[addr].phone,
+                                        content: addressList[addr].content,
+                                        store_distance: addressList[addr].store_distance,
+                                        rating: addressList[addr].rating,
+                                        dibs_count: addressList[addr].dibs_count,
+                                        review_count: addressList[addr].review_count
+                                    };
+                                    positions.push(data);
+                                }
+
+                            });
+
+                        }
+                        resolve();
+                        //reject('setAddress fail');
+                    }, 300);
+                });
+            };
+
+            const setMarker = function () {
+                return new Promise(function (resolve, reject) {
+                    setTimeout(function () {
+                        let markArr = new Array(positions.length);
+
+                        for (var i = 0; i < positions.length; i++) {
+
+                            // 마커를 생성합니다
+                            let marker = new kakao.maps.Marker({
+                                map: map, // 마커를 표시할 지도
+                                position: positions[i].latlng // 마커를 표시할 위치
+                            });
+                            let markIwContent = '<div style="padding:5px; margin:0 auto; text-align:center;">' + '<img style="padding:5px; margin:0 auto; width:200px;" src="' + positions[i].store_picture_url + '"><br>' + positions[i].title + '<br>☆' + positions[i].rating + '</div>' // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+
+                            let markStoreId = positions[i].store_id;
+
+                            let markInfowindow = new kakao.maps.InfoWindow({
+                                content: markIwContent
+                            })
+
+                            console.log(i + "번째 마크 정보: " + positions[i].latlng);
+
+                            // 마커에 마우스오버 이벤트를 등록합니다
+                            kakao.maps.event.addListener(marker, 'mouseover', function () {
+                                // 마커에 마우스오버 이벤트가 발생하면 인포윈도우를 마커위에 표시합니다
+                                markInfowindow.open(map, marker);
+                            });
+
+                            // 마커에 마우스아웃 이벤트를 등록합니다
+                            kakao.maps.event.addListener(marker, 'mouseout', function () {
+                                // 마커에 마우스아웃 이벤트가 발생하면 인포윈도우를 제거합니다
+                                markInfowindow.close();
+                            });
+                            // 마커에 클릭이벤트를 등록합니다
+                            kakao.maps.event.addListener(marker, 'click', function () {
+                                // 마커 위에 인포윈도우를 표시합니다
+                                window.location.href = 'http://localhost/store/read?store_id=' + markStoreId;
+                            });
+                        }
+
+                        resolve();
+                        //reject('setMarker fail');
+
+
+                    }, 1200);
+                });
+            };
+
+
+
+            setAddress()
+                .then(setMarker());
+
+
+
+
+        </script>
+
+    </th:block>
+
+</th:block>
